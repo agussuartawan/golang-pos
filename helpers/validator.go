@@ -50,6 +50,18 @@ func tagToMessage(tag string, param string) string {
 		return "Field is too long, max " + param
 	case "min":
 		return "Field is too short, min " + param
+	case "email":
+		return "Field is not a valid email"
+	case "gte":
+		return "Field is too low, min " + param
+	case "lte":
+		return "Field is too high, max " + param
+	case "oneof":
+		return "Field must be one of " + param
+	case "gt":
+		return "Field must be greater than " + param
+	case "lt":
+		return "Field must be less than " + param
 	default:
 		return ""
 	}

@@ -1,8 +1,6 @@
-package company
+package companyRepository
 
 import (
-	"log"
-
 	"github.com/agussuartawan/golang-pos/config"
 	"github.com/agussuartawan/golang-pos/data/request"
 	"github.com/agussuartawan/golang-pos/data/response"
@@ -28,7 +26,6 @@ func FindById(id int) (response.CompanyResponse, error) {
 
 func Create(model models.Company) error {
 	result := config.DB.Create(&model)
-	log.Println(result.Statement)
 	return result.Error
 }
 

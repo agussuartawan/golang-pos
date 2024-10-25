@@ -1,6 +1,8 @@
 package helper
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -57,4 +59,9 @@ func JSON400(ctx *gin.Context, err error) {
 		Message: http.StatusText(http.StatusBadRequest),
 		Errors:  err.Error(),
 	})
+}
+
+func LogInfo(value interface{}) {
+	jsonData, _ := json.MarshalIndent(value, "", "  ")
+	fmt.Println(string(jsonData))
 }

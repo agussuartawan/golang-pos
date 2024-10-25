@@ -10,5 +10,12 @@ func init() {
 }
 
 func main() {
-	config.DB.AutoMigrate(&models.Company{}, &models.Warehouse{})
+	config.DB.AutoMigrate(
+		&models.Company{},
+		&models.Warehouse{},
+		&models.User{},
+		&models.Role{},
+		&models.Session{},
+		&models.Permission{},
+	)
 }

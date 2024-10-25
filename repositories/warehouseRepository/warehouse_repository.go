@@ -1,4 +1,4 @@
-package warehouse
+package warehouseRepository
 
 import (
 	"github.com/agussuartawan/golang-pos/config"
@@ -52,12 +52,17 @@ func List(param request.CompanyParam) ([]response.WarehouseResponse, error) {
 	var warehouses []response.WarehouseResponse
 	result := config.DB.Table(TABLE).
 		Joins("Company").
-		Where(TABLE+".deleted_at IS NULL").
-		Where(param).
-		Order(TABLE+".created_at DESC").
-		Find(&warehouses)
+		Where(TABLE+".deleted_at IS NULL")
 
-	return warehouses, result.Error
+	if param.CompanyId != nil {
+		result = result.Where(TABLE+".company_id = ?", *param.CompanyId)
+	}
+	if param.Name != nil {
+		result = result.Where(TABLE+".name like ?", "%"+*param.Name+"%")
+	}
+	err := 	result.Order(TABLE+".created_at DESC").Find(&warehouses).Error
+
+	return warehouses, err
 }
 
 func FindById(id int) (response.WarehouseResponse, error) {

@@ -7,8 +7,3 @@ type WarehouseResponse struct {
 	CompanyId   int                    `json:"-"`
 	Company     Company  			`json:"company"`
 }
-
-type Company struct {
-	Id int `json:"id"`
-	Name string `json:"name"`
-}

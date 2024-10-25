@@ -1,4 +1,4 @@
-package warehouse
+package warehouseController
 
 import (
 	"log"
@@ -10,8 +10,8 @@ import (
 	"github.com/agussuartawan/golang-pos/errors"
 	helper "github.com/agussuartawan/golang-pos/helpers"
 	"github.com/agussuartawan/golang-pos/models"
-	companyRepo "github.com/agussuartawan/golang-pos/repositories/company"
-	warehouseRepo "github.com/agussuartawan/golang-pos/repositories/warehouse"
+	companyRepo "github.com/agussuartawan/golang-pos/repositories/companyRepository"
+	warehouseRepo "github.com/agussuartawan/golang-pos/repositories/warehouseRepository"
 	"github.com/gin-gonic/gin"
 )
 

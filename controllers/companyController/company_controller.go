@@ -1,4 +1,4 @@
-package company
+package companyController
 
 import (
 	"log"
@@ -9,7 +9,7 @@ import (
 	"github.com/agussuartawan/golang-pos/data/response"
 	helper "github.com/agussuartawan/golang-pos/helpers"
 	"github.com/agussuartawan/golang-pos/models"
-	companyRepo "github.com/agussuartawan/golang-pos/repositories/company"
+	companyRepo "github.com/agussuartawan/golang-pos/repositories/companyRepository"
 	"github.com/gin-gonic/gin"
 )
 

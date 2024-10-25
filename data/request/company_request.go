@@ -8,6 +8,6 @@ type CompanyRequest struct {
 }
 
 type CompanyParam struct {
-	CompanyId int
-	Name string
+	CompanyId *int
+	Name *string
 }

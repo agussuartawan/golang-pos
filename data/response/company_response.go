@@ -11,3 +11,8 @@ type CompanyResponse struct {
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
+
+type Company struct {
+	Id int `json:"id"`
+	Name string `json:"name"`
+}
