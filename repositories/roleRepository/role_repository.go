@@ -45,3 +45,7 @@ func Get(role *models.Role, id uint) error {
 
 	return err
 }
+
+func Gets(roles *[]models.Role, ids []uint) error {
+	return config.DB.Find(&roles, ids).Error
+}

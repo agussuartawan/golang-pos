@@ -1,10 +1,11 @@
 package router
 
 import (
-	companyController "github.com/agussuartawan/golang-pos/controllers/companyController"
+	"github.com/agussuartawan/golang-pos/controllers/companyController"
 	"github.com/agussuartawan/golang-pos/controllers/permissionController"
 	"github.com/agussuartawan/golang-pos/controllers/roleController"
-	warehouseController "github.com/agussuartawan/golang-pos/controllers/warehouseController"
+	"github.com/agussuartawan/golang-pos/controllers/userController"
+	"github.com/agussuartawan/golang-pos/controllers/warehouseController"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,6 +27,8 @@ func LoadRouter() *gin.Engine {
 	roleRouterV1()
 	// route for permission
 	permissionRouterV1()
+	// route for user
+	userRouterV1()
 
 	return router
 }
@@ -65,4 +68,14 @@ func permissionRouterV1() {
 	router.POST("/", permissionController.Create)
 	// router.PATCH("/:id", permissionController.Update)
 	// router.DELETE("/:id", permissionController.Delete)
+}
+
+func userRouterV1() {
+	router := apiRouterV1.Group("/user")
+	router.GET("/", userController.List)
+	// router.GET("/:id", userController.FindById)
+	router.POST("/", userController.Create)
+	router.POST("/append-roles", userController.AppendRoles)
+	// router.PATCH("/:id", userController.Update)
+	// router.DELETE("/:id", userController.Delete)
 }
