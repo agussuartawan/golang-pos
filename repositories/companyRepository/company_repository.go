@@ -30,11 +30,12 @@ func Create(model models.Company) error {
 }
 
 func Update(id int, request request.CompanyRequest) error {
-	company := config.DB.First(&models.Company{}, id)
-	if company.Error != nil {
-		return company.Error
+	var company models.Company
+	err := config.DB.First(&company, id).Error
+	if err != nil {
+		return err
 	}
-	
+
 	result := config.DB.Model(&company).Updates(request)
 	return result.Error
 }

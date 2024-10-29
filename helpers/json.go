@@ -62,6 +62,9 @@ func JSON400(ctx *gin.Context, err error) {
 }
 
 func LogInfo(value interface{}) {
-	jsonData, _ := json.MarshalIndent(value, "", "  ")
+	jsonData, err := json.MarshalIndent(value, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+	}
 	fmt.Println(string(jsonData))
 }

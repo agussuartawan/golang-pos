@@ -22,13 +22,13 @@ func Delete(id int) error {
 		return errors.ErrWarehouseNotFound
 	}
 
-	result := config.DB.Delete(&models.Warehouse{})
+	result := config.DB.Delete(&models.Warehouse{}, id)
 	return result.Error
 }
 
 func Update(id int, req request.WarehouseRequest) error {
 	var model models.Warehouse
-	if result := config.DB.First(&model); result.Error != nil {
+	if result := config.DB.First(&model, id); result.Error != nil {
 		return result.Error
 	}
 
@@ -39,6 +39,7 @@ func Update(id int, req request.WarehouseRequest) error {
 func IsExist(id int) (bool, error) {
 	var exists bool
 	if result := config.DB.Model(&models.Warehouse{}).
+		Select("1").
 		Where("id = ?", id).
 		Limit(1).
 		Scan(&exists); result.Error != nil {

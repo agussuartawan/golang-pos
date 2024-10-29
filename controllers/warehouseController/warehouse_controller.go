@@ -88,9 +88,55 @@ func Create(ctx *gin.Context) {
 }
 
 func Update(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		helper.ThrowError(ctx, err)
+	}
 
+	log.Printf("Mengupdate warehouse dengan id %v...", id)
+
+	// parse json into request
+	req := request.WarehouseRequest{}
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		helper.ThrowError(ctx, err)
+		return
+	}
+
+	// validate request
+	if err := helper.Validator(req); err != nil {
+		helper.ThrowFormatInvalid(ctx, err)
+		return
+	}
+
+	// pastikan companyId ada di DB
+	if exists, err := companyRepo.IsExists(req.CompanyId); err != nil {
+		helper.ThrowError(ctx, err)
+		return
+	} else if !exists {
+		helper.ThrowError(ctx, errors.ErrCompanyNotFound)
+		return
+	}
+	
+	if err := warehouseRepo.Update(id, req); err != nil {
+		helper.ThrowError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response.OK(req))
 }
 
 func Delete(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		helper.ThrowError(ctx, err)
+	}
 
+	log.Printf("Menghapus warehouse dengan id %v...", id)
+
+	if err := warehouseRepo.Delete(id); err != nil {
+		helper.ThrowError(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response.OK(nil))
 }

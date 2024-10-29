@@ -90,12 +90,7 @@ func Update(ctx *gin.Context) {
 
 	// validate request
 	if err := helper.Validator(request); err != nil {
-		res := response.Response{
-			Status:  http.StatusBadRequest,
-			Message: "Bad Request",
-			Errors:    err,
-		}
-		ctx.JSON(res.Status, res)
+		helper.ThrowFormatInvalid(ctx, err)
 		return
 	}
 
