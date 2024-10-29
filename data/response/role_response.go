@@ -19,3 +19,9 @@ type Role struct {
 	Id uint `json:"id"`
 	Name string `json:"name"`
 }
+
+type RolePermission struct {
+	Id uint `json:"id"`
+	Name string `json:"name"`
+	Permissions []Permission `json:"permissions"`
+}

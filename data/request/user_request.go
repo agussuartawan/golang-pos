@@ -11,3 +11,8 @@ type AppendRoleRequest struct {
 	UserId uint `json:"userId" form:"userId" validate:"required"`
 	RoleIds []uint `json:"roleIds" form:"roleIds" validate:"required,gt=0"`
 }
+
+type LoginRequest struct {
+	Email string `json:"email" form:"email" validate:"required,email"`
+	Password string `json:"password" form:"password" validate:"required"`
+}

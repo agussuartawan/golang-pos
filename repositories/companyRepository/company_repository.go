@@ -1,10 +1,10 @@
 package companyRepository
 
 import (
-	"github.com/agussuartawan/golang-pos/config"
+	"github.com/agussuartawan/golang-pos/core/config"
+	"github.com/agussuartawan/golang-pos/core/errors"
 	"github.com/agussuartawan/golang-pos/data/request"
 	"github.com/agussuartawan/golang-pos/data/response"
-	"github.com/agussuartawan/golang-pos/errors"
 	"github.com/agussuartawan/golang-pos/models"
 )
 
@@ -12,13 +12,13 @@ const TABLE = "companies"
 
 func List() ([]response.CompanyResponse, error) {
 	var companies []response.CompanyResponse
-	result := config.DB.Table(TABLE).Where("deleted_at IS NULL").Find(&companies).Order("created_at desc")
+	result := config.DB.Model(&models.Company{}).Where("deleted_at IS NULL").Find(&companies).Order("created_at desc")
 	return companies, result.Error
 }
 
 func FindById(id int) (response.CompanyResponse, error) {
 	var company response.CompanyResponse
-	result := config.DB.Table(TABLE).
+	result := config.DB.Model(&models.Company{}).
 		Where("deleted_at IS NULL").
 		First(&company, id)
 	return company, result.Error

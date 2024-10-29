@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
+	helper "github.com/agussuartawan/golang-pos/core/helpers"
 	"github.com/agussuartawan/golang-pos/data/request"
 	"github.com/agussuartawan/golang-pos/data/response"
-	helper "github.com/agussuartawan/golang-pos/helpers"
 	"github.com/agussuartawan/golang-pos/models"
 	"github.com/agussuartawan/golang-pos/repositories/roleRepository"
 	"github.com/agussuartawan/golang-pos/repositories/userRepository"
@@ -93,7 +93,7 @@ func List(ctx *gin.Context) {
 		return
 	}
 
-	var userResponse []response.UserResponse
+	userResponse := []response.UserResponse{}
 	for _, user := range users {
 		userResponse = append(userResponse, response.UserResponse{
 			Id: user.ID,

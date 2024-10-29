@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/agussuartawan/golang-pos/config"
+	"github.com/agussuartawan/golang-pos/core/config"
 	"github.com/agussuartawan/golang-pos/models"
 )
 

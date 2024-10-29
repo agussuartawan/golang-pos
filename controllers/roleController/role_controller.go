@@ -6,7 +6,7 @@ import (
 
 	"github.com/agussuartawan/golang-pos/data/request"
 	"github.com/agussuartawan/golang-pos/data/response"
-	helper "github.com/agussuartawan/golang-pos/helpers"
+	helper "github.com/agussuartawan/golang-pos/core/helpers"
 	"github.com/agussuartawan/golang-pos/models"
 	"github.com/agussuartawan/golang-pos/repositories/permissionRepository"
 	"github.com/agussuartawan/golang-pos/repositories/roleRepository"
@@ -23,7 +23,7 @@ func List(ctx *gin.Context) {
 	}
 
 	// Mapping dari models.Role ke response.RoleResponse
-    var roleResponses []response.RoleResponse
+    roleResponses := []response.RoleResponse{}
     for _, role := range roles {
         roleResponse := response.RoleResponse{
             Id:          role.ID,

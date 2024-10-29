@@ -3,7 +3,7 @@ package models
 import (
 	"strings"
 
-	helper "github.com/agussuartawan/golang-pos/helpers"
+	helper "github.com/agussuartawan/golang-pos/core/helpers"
 	"gorm.io/gorm"
 
 	"golang.org/x/crypto/bcrypt"

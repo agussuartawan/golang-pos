@@ -7,7 +7,7 @@ import (
 
 	"github.com/agussuartawan/golang-pos/data/request"
 	"github.com/agussuartawan/golang-pos/data/response"
-	helper "github.com/agussuartawan/golang-pos/helpers"
+	helper "github.com/agussuartawan/golang-pos/core/helpers"
 	"github.com/agussuartawan/golang-pos/models"
 	companyRepo "github.com/agussuartawan/golang-pos/repositories/companyRepository"
 	"github.com/gin-gonic/gin"

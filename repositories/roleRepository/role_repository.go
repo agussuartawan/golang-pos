@@ -3,7 +3,7 @@ package roleRepository
 import (
 	"errors"
 
-	"github.com/agussuartawan/golang-pos/config"
+	"github.com/agussuartawan/golang-pos/core/config"
 	"github.com/agussuartawan/golang-pos/models"
 	"gorm.io/gorm"
 )

@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/agussuartawan/golang-pos/core/errors"
 	"github.com/agussuartawan/golang-pos/data/response"
-	"github.com/agussuartawan/golang-pos/errors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -19,9 +19,11 @@ func JSON(ctx *gin.Context, response response.Response) {
 
 func ThrowError(ctx *gin.Context, err error) {
 	switch {
+		case err == errors.ErrUnauthorized || strings.Contains(err.Error(), "jwt"):
+			JSON401(ctx, err.Error())
 		case err == gorm.ErrRecordNotFound || strings.Contains(err.Error(), "not found"):
 			JSON404(ctx, err)
-		case err == errors.ErrFormatInvalid:
+		case err == errors.ErrFormatInvalid || strings.Contains(err.Error(), "invalid"):
 			JSON400(ctx, err)
 		default:
 			JSON500(ctx, err)
@@ -58,6 +60,22 @@ func JSON400(ctx *gin.Context, err error) {
 		Status:  http.StatusBadRequest,
 		Message: http.StatusText(http.StatusBadRequest),
 		Errors:  err.Error(),
+	})
+}
+
+func JSON401(ctx *gin.Context, message string) {
+	ctx.JSON(http.StatusUnauthorized, response.Response{
+		Status:  http.StatusUnauthorized,
+		Message: http.StatusText(http.StatusUnauthorized),
+		Errors:  message,
+	})
+}
+
+func JSON403(ctx *gin.Context, message string) {
+	ctx.JSON(http.StatusForbidden, response.Response{
+		Status:  http.StatusForbidden,
+		Message: http.StatusText(http.StatusForbidden),
+		Errors:  message,
 	})
 }
 

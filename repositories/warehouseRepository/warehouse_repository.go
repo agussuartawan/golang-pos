@@ -1,10 +1,10 @@
 package warehouseRepository
 
 import (
-	"github.com/agussuartawan/golang-pos/config"
+	"github.com/agussuartawan/golang-pos/core/config"
+	"github.com/agussuartawan/golang-pos/core/errors"
 	"github.com/agussuartawan/golang-pos/data/request"
 	"github.com/agussuartawan/golang-pos/data/response"
-	"github.com/agussuartawan/golang-pos/errors"
 	"github.com/agussuartawan/golang-pos/models"
 )
 
@@ -68,7 +68,7 @@ func List(param request.CompanyParam) ([]response.WarehouseResponse, error) {
 
 func FindById(id int) (response.WarehouseResponse, error) {
 	var warehouse response.WarehouseResponse
-	result := config.DB.Table(TABLE).
+	result := config.DB.Model(&models.Warehouse{}).
 		Joins("Company").
 		Where(TABLE+".deleted_at is null and "+TABLE+".id = ?", id).
 		First(&warehouse)
