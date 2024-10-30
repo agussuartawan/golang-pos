@@ -12,6 +12,10 @@ func Create(model models.User) error {
 	return err
 }
 
+func FirstOrCreate(model models.User) error {
+	return config.DB.FirstOrCreate(&model, models.User{Email: model.Email}).Error
+}
+
 func AppendRoles(u models.User, roles []models.Role) error {
 	return config.DB.Model(&u).Association("Roles").Append(roles)
 }
@@ -52,6 +56,9 @@ func List() ([]models.User, error) {
 		Preload("Roles", func(db *gorm.DB) *gorm.DB {
 			return db.Select("roles.id, roles.name")
 		}).
+		Preload("Roles.Permissions", func(db *gorm.DB) *gorm.DB {
+			return db.Select("permissions.id, permissions.name")
+		}).
 		Where("users.deleted_at IS NULL").
 		Order("users.created_at desc").
 		Find(&users).
@@ -69,6 +76,7 @@ func IsHasPermission(id uint, permission string) (bool, error) {
 		Joins("JOIN role_permissions ON role_permissions.role_id = roles.id").
 		Joins("JOIN permissions ON permissions.id = role_permissions.permission_id").
 		Where("users.id = ?", id).
+		Where("users.deleted_at IS NULL").
 		Where("permissions.name = ?", permission).
 		Limit(1).
 		Scan(&exists); result.Error != nil {
@@ -76,6 +84,23 @@ func IsHasPermission(id uint, permission string) (bool, error) {
 	}
 
 	return exists, nil
+}
+
+func IsHasRole(id uint, role string) (bool, error) {
+	var yes bool
+	if err := config.DB.Model(&models.User{}).
+		Select("1").
+		Joins("JOIN user_roles ON user_roles.user_id = users.id").
+		Joins("JOIN roles ON roles.id = user_roles.role_id").
+		Where("users.deleted_at IS NULL").
+		Where("users.id = ?", id).
+		Where("roles.name = ?", role).
+		Scan(&yes).
+		Error; err != nil {
+		return false, err
+	}
+
+	return yes, nil
 }
 
 func GetProfile(id uint, user *models.User) error {

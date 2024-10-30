@@ -13,6 +13,10 @@ func Create(model models.Role) error {
 	return result.Error
 }
 
+func FirstOrCreate(model models.Role) error {
+	return config.DB.FirstOrCreate(&model, models.Role{Name: model.Name}).Error
+}
+
 func List() ([]models.Role, error) {
 	var roles []models.Role // Gunakan struct model asli
 	// Query menggunakan model asli untuk memastikan relasi many2many berjalan

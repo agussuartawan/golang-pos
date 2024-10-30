@@ -4,8 +4,8 @@ import "time"
 
 type LoginResponse struct {
 	Name        string   `json:"name"`
-	Roles       []string `json:"roles"`
-	Permissions []string `json:"permissions"`
+	Roles       []string `json:"roles,omitempty"`
+	Permissions []string `json:"permissions,omitempty"`
 	Token       string   `json:"token"`
 }
 
@@ -16,5 +16,5 @@ type ProfileResponse struct {
 	Phone     *string          `json:"phone"`
 	CreatedAt time.Time        `json:"createdAt"`
 	UpdatedAt time.Time        `json:"updatedAt"`
-	Roles     []RolePermission `json:"roles"`
+	Roles     []RolePermission `json:"roles,omitempty"`
 }

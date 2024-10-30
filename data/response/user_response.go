@@ -16,10 +16,11 @@ type User struct {
 }
 
 type UserResponse struct {
-	Id        uint      `json:"id"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	Phone     *string   `json:"phone"`
-	CreatedAt time.Time `json:"createdAt"`
-	Roles     []Role    `json:"roles,omitempty"`
+	Id          uint         `json:"id"`
+	Name        string       `json:"name"`
+	Email       string       `json:"email"`
+	Phone       *string      `json:"phone"`
+	CreatedAt   time.Time    `json:"createdAt"`
+	Roles       []Role       `json:"roles,omitempty"`
+	Permissions []Permission `json:"permissions,omitempty"`
 }

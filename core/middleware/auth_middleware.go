@@ -57,6 +57,18 @@ func Authorized(permission string) gin.HandlerFunc {
 			return
 		}
 
+		// permit if role contains super_admin
+		superAdmin, err := userrepository.IsHasRole(session.UserId, "super_admin")
+		if err != nil {
+			helper.ThrowError(c, err)
+			return
+		}
+		if superAdmin {
+			c.Set("session", session)
+			c.Next()
+			return
+		}
+
 		// check permission
 		permitted, err := userrepository.IsHasPermission(session.UserId, permission)
 		if err != nil {

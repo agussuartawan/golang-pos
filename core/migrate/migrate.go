@@ -11,15 +11,16 @@ func init() {
 }
 
 func main() {
-	err := config.DB.AutoMigrate(
+	if err := config.DB.AutoMigrate(
 		&models.Company{},
 		&models.Warehouse{},
 		&models.User{},
 		&models.Role{},
 		&models.Session{},
 		&models.Permission{},
-	)
-	if err != nil {
+	); err != nil {
 		helper.LogError(err)
 	}
+
+	models.RunSeeders()
 }

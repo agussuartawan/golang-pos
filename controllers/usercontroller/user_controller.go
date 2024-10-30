@@ -60,7 +60,7 @@ func AppendRoles(ctx *gin.Context) {
 		helper.ThrowError(ctx, err)
 		return
 	}
-	roles := []models.Role{}
+	var roles []models.Role
 	if err := rolerepository.Gets(&roles, req.RoleIds); err != nil {
 		helper.ThrowError(ctx, err)
 		return
@@ -93,26 +93,30 @@ func List(ctx *gin.Context) {
 		return
 	}
 
-	var userResponse []response.UserResponse
+	var userResponses []response.UserResponse
 	for _, user := range users {
-		userResponse = append(userResponse, response.UserResponse{
+		userResponse := response.UserResponse{
 			Id:        user.ID,
 			Name:      user.Name,
 			Email:     user.Email,
 			Phone:     user.Phone,
 			CreatedAt: user.CreatedAt,
-			Roles: func(roles []models.Role) []response.Role {
-				var res []response.Role
-				for _, role := range roles {
-					res = append(res, response.Role{
-						Id:   role.ID,
-						Name: role.Name,
-					})
-				}
-				return res
-			}(user.Roles),
-		})
+		}
+
+		for _, role := range user.Roles {
+			userResponse.Roles = append(userResponse.Roles, response.Role{
+				Id:   role.ID,
+				Name: role.Name,
+			})
+			for _, permission := range role.Permissions {
+				userResponse.Permissions = append(userResponse.Permissions, response.Permission{
+					Id:   permission.ID,
+					Name: permission.Name,
+				})
+			}
+		}
+		userResponses = append(userResponses, userResponse)
 	}
 
-	ctx.JSON(http.StatusOK, response.OK(userResponse))
+	ctx.JSON(http.StatusOK, response.OK(userResponses))
 }
