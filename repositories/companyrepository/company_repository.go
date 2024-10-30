@@ -1,4 +1,4 @@
-package companyRepository
+package companyrepository
 
 import (
 	"github.com/agussuartawan/golang-pos/core/config"

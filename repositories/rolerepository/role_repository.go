@@ -1,4 +1,4 @@
-package roleRepository
+package rolerepository
 
 import (
 	"errors"
@@ -14,19 +14,19 @@ func Create(model models.Role) error {
 }
 
 func List() ([]models.Role, error) {
-	var roles []models.Role  // Gunakan struct model asli
-    // Query menggunakan model asli untuk memastikan relasi many2many berjalan
-    err := config.DB.Model(&models.Role{}).
-        Select("roles.created_at, roles.id, roles.name, roles.description").
-        Preload("Permissions", func(db *gorm.DB) *gorm.DB {
-            return db.Select("permissions.id, permissions.name")
-        }).
-        Where("roles.deleted_at IS NULL").
-        Order("roles.created_at desc").
-        Find(&roles).
+	var roles []models.Role // Gunakan struct model asli
+	// Query menggunakan model asli untuk memastikan relasi many2many berjalan
+	err := config.DB.Model(&models.Role{}).
+		Select("roles.created_at, roles.id, roles.name, roles.description").
+		Preload("Permissions", func(db *gorm.DB) *gorm.DB {
+			return db.Select("permissions.id, permissions.name")
+		}).
+		Where("roles.deleted_at IS NULL").
+		Order("roles.created_at desc").
+		Find(&roles).
 		Error
 
-    return roles, err
+	return roles, err
 }
 
 func AppendPermissions(role models.Role, permissions []models.Permission) error {

@@ -5,8 +5,8 @@ import (
 
 	helper "github.com/agussuartawan/golang-pos/core/helpers"
 	"github.com/agussuartawan/golang-pos/data/payload"
-	"github.com/agussuartawan/golang-pos/repositories/sessionRepository"
-	"github.com/agussuartawan/golang-pos/repositories/userRepository"
+	"github.com/agussuartawan/golang-pos/repositories/sessionrepository"
+	"github.com/agussuartawan/golang-pos/repositories/userrepository"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,7 +15,6 @@ func Authenticated() gin.HandlerFunc {
 		token := c.GetHeader("Authorization")
 		if token == "" || !strings.HasPrefix(token, "Bearer ") {
 			helper.JSON401(c, "bearer token required")
-			c.Abort()
 			return
 		}
 
@@ -23,17 +22,15 @@ func Authenticated() gin.HandlerFunc {
 		claims, err := validateToken(token)
 		if err != nil {
 			helper.ThrowError(c, err)
-			c.Abort()
 			return
 		}
 
 		var session payload.SessionPayload
-		if err := sessionRepository.Get(&session, claims.SessionId); err != nil {
+		if err := sessionrepository.Get(&session, claims.SessionId); err != nil {
 			helper.ThrowError(c, err)
-			c.Abort()
 			return
 		}
-		
+
 		c.Set("session", session)
 		c.Next()
 	}
@@ -44,7 +41,6 @@ func Authorized(permission string) gin.HandlerFunc {
 		token := c.GetHeader("Authorization")
 		if token == "" || !strings.HasPrefix(token, "Bearer ") {
 			helper.JSON401(c, "bearer token required")
-			c.Abort()
 			return
 		}
 
@@ -52,27 +48,23 @@ func Authorized(permission string) gin.HandlerFunc {
 		claims, err := validateToken(token)
 		if err != nil {
 			helper.ThrowError(c, err)
-			c.Abort()
 			return
 		}
 
 		var session payload.SessionPayload
-		if err := sessionRepository.Get(&session, claims.SessionId); err != nil {
+		if err := sessionrepository.Get(&session, claims.SessionId); err != nil {
 			helper.ThrowError(c, err)
-			c.Abort()
 			return
 		}
 
 		// check permission
-		permitted, err := userRepository.IsHasPermission(session.UserId, permission)
+		permitted, err := userrepository.IsHasPermission(session.UserId, permission)
 		if err != nil {
 			helper.ThrowError(c, err)
-			c.Abort()
 			return
 		}
 		if !permitted {
 			helper.JSON403(c, "You don't have permission")
-			c.Abort()
 			return
 		}
 

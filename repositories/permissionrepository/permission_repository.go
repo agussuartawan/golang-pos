@@ -1,4 +1,4 @@
-package permissionRepository
+package permissionrepository
 
 import (
 	"github.com/agussuartawan/golang-pos/core/config"

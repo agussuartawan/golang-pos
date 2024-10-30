@@ -1,4 +1,4 @@
-package warehouseController
+package warehousecontroller
 
 import (
 	"log"
@@ -10,8 +10,8 @@ import (
 	"github.com/agussuartawan/golang-pos/data/request"
 	"github.com/agussuartawan/golang-pos/data/response"
 	"github.com/agussuartawan/golang-pos/models"
-	companyRepo "github.com/agussuartawan/golang-pos/repositories/companyRepository"
-	warehouseRepo "github.com/agussuartawan/golang-pos/repositories/warehouseRepository"
+	companyRepo "github.com/agussuartawan/golang-pos/repositories/companyrepository"
+	warehouseRepo "github.com/agussuartawan/golang-pos/repositories/warehouserepository"
 	"github.com/gin-gonic/gin"
 )
 
@@ -72,8 +72,8 @@ func Create(ctx *gin.Context) {
 
 	// map request to model
 	model := models.Warehouse{
-		CompanyId: req.CompanyId,
-		Name: req.Name,
+		CompanyId:   req.CompanyId,
+		Name:        req.Name,
 		Description: req.Description,
 	}
 
@@ -116,7 +116,7 @@ func Update(ctx *gin.Context) {
 		helper.ThrowError(ctx, errors.ErrCompanyNotFound)
 		return
 	}
-	
+
 	if err := warehouseRepo.Update(id, req); err != nil {
 		helper.ThrowError(ctx, err)
 		return

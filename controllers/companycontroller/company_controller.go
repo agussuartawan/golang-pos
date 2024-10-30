@@ -1,15 +1,15 @@
-package companyController
+package companycontroller
 
 import (
 	"log"
 	"net/http"
 	"strconv"
 
+	helper "github.com/agussuartawan/golang-pos/core/helpers"
 	"github.com/agussuartawan/golang-pos/data/request"
 	"github.com/agussuartawan/golang-pos/data/response"
-	helper "github.com/agussuartawan/golang-pos/core/helpers"
 	"github.com/agussuartawan/golang-pos/models"
-	companyRepo "github.com/agussuartawan/golang-pos/repositories/companyRepository"
+	companyRepo "github.com/agussuartawan/golang-pos/repositories/companyrepository"
 	"github.com/gin-gonic/gin"
 )
 
@@ -42,7 +42,7 @@ func FindById(ctx *gin.Context) {
 
 func Create(ctx *gin.Context) {
 	log.Println("Membuat company baru...")
-	
+
 	// bind json to struct
 	request := request.CompanyRequest{}
 	if err := ctx.ShouldBindJSON(&request); err != nil {
@@ -55,12 +55,12 @@ func Create(ctx *gin.Context) {
 		helper.ThrowFormatInvalid(ctx, err)
 		return
 	}
-	
+
 	// map request to model
 	company := models.Company{
-		Name: request.Name,
-		Email: request.Email,
-		Phone: request.Phone,
+		Name:    request.Name,
+		Email:   request.Email,
+		Phone:   request.Phone,
 		Address: request.Address,
 	}
 
@@ -69,7 +69,7 @@ func Create(ctx *gin.Context) {
 		helper.ThrowError(ctx, err)
 		return
 	}
-	
+
 	// give response
 	ctx.JSON(http.StatusOK, response.OK(request))
 }
@@ -82,26 +82,26 @@ func Update(ctx *gin.Context) {
 	log.Println("Mengambil company dengan id: ", id)
 
 	// bind json to struct
-	request := request.CompanyRequest{}
-	if err := ctx.ShouldBindJSON(&request); err != nil {
+	req := request.CompanyRequest{}
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		helper.ThrowError(ctx, err)
 		return
 	}
 
-	// validate request
-	if err := helper.Validator(request); err != nil {
+	// validate req
+	if err := helper.Validator(req); err != nil {
 		helper.ThrowFormatInvalid(ctx, err)
 		return
 	}
 
 	// store to database
-	if err := companyRepo.Update(id, request); err != nil {
+	if err := companyRepo.Update(id, req); err != nil {
 		helper.ThrowError(ctx, err)
 		return
 	}
-	
+
 	// give response
-	ctx.JSON(http.StatusOK, response.OK(request))
+	ctx.JSON(http.StatusOK, response.OK(req))
 }
 
 func Delete(ctx *gin.Context) {

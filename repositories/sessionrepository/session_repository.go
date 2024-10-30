@@ -1,4 +1,4 @@
-package sessionRepository
+package sessionrepository
 
 import (
 	"errors"
@@ -12,7 +12,7 @@ import (
 
 func Create(userId uint, expiredAt time.Time, ipAddress string) (string, error) {
 	session := models.Session{
-		UserId: userId,
+		UserId:    userId,
 		IpAddress: &ipAddress,
 		ExpiredAt: expiredAt,
 	}

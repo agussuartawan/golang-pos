@@ -1,14 +1,14 @@
-package permissionController
+package permissioncontroller
 
 import (
 	"log"
 	"net/http"
 
+	helper "github.com/agussuartawan/golang-pos/core/helpers"
 	"github.com/agussuartawan/golang-pos/data/request"
 	"github.com/agussuartawan/golang-pos/data/response"
-	helper "github.com/agussuartawan/golang-pos/core/helpers"
 	"github.com/agussuartawan/golang-pos/models"
-	"github.com/agussuartawan/golang-pos/repositories/permissionRepository"
+	"github.com/agussuartawan/golang-pos/repositories/permissionrepository"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,10 +27,10 @@ func Create(ctx *gin.Context) {
 	}
 
 	permission := models.Permission{
-		Name: request.Name,
+		Name:        request.Name,
 		Description: request.Description,
 	}
-	if err := permissionRepository.Create(permission); err != nil {
+	if err := permissionrepository.Create(permission); err != nil {
 		helper.ThrowError(ctx, err)
 		return
 	}
@@ -47,7 +47,7 @@ func List(ctx *gin.Context) {
 		return
 	}
 
-	permissions, err := permissionRepository.List(param)
+	permissions, err := permissionrepository.List(param)
 	if err != nil {
 		helper.ThrowError(ctx, err)
 		return

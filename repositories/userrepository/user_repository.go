@@ -1,10 +1,8 @@
-package userRepository
+package userrepository
 
 import (
 	"errors"
-
 	"github.com/agussuartawan/golang-pos/core/config"
-	"github.com/agussuartawan/golang-pos/data/response"
 	"github.com/agussuartawan/golang-pos/models"
 	"gorm.io/gorm"
 )
@@ -27,8 +25,19 @@ func Get(u *models.User, id uint) error {
 	return err
 }
 
-func GetByEmail(u *response.UserLoginResponse, email string) error {
-	err := config.DB.Model(&models.User{}).Where("email = ?", email).First(&u).Error
+func GetByEmail(user *models.User, email string) error {
+	err := config.DB.Model(&models.User{}).
+		Select("users.id, users.name, users.password").
+		Preload("Roles", func(db *gorm.DB) *gorm.DB {
+			return db.Select("roles.id, roles.name")
+		}).
+		Preload("Roles.Permissions", func(db *gorm.DB) *gorm.DB {
+			return db.Select("permissions.id, permissions.name")
+		}).
+		Where("email = ?", email).
+		First(&user).
+		Error
+
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return errors.New("email not found")
 	}
@@ -72,10 +81,10 @@ func IsHasPermission(id uint, permission string) (bool, error) {
 func GetProfile(id uint, user *models.User) error {
 	return config.DB.Model(&models.User{}).
 		Select("users.id, users.phone, users.created_at, users.updated_at").
-		Preload("Roles", func (db *gorm.DB) *gorm.DB {
+		Preload("Roles", func(db *gorm.DB) *gorm.DB {
 			return db.Select("roles.id, roles.name")
 		}).
-		Preload("Roles.Permissions", func (db *gorm.DB) *gorm.DB {
+		Preload("Roles.Permissions", func(db *gorm.DB) *gorm.DB {
 			return db.Select("permissions.id, permissions.name")
 		}).
 		Preload("Roles.Permissions").

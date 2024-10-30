@@ -19,14 +19,14 @@ func JSON(ctx *gin.Context, response response.Response) {
 
 func ThrowError(ctx *gin.Context, err error) {
 	switch {
-		case err == errors.ErrUnauthorized || strings.Contains(err.Error(), "jwt"):
-			JSON401(ctx, err.Error())
-		case err == gorm.ErrRecordNotFound || strings.Contains(err.Error(), "not found"):
-			JSON404(ctx, err)
-		case err == errors.ErrFormatInvalid || strings.Contains(err.Error(), "invalid"):
-			JSON400(ctx, err)
-		default:
-			JSON500(ctx, err)
+	case err == errors.ErrUnauthorized || strings.Contains(err.Error(), "jwt"):
+		JSON401(ctx, err.Error())
+	case err == gorm.ErrRecordNotFound || strings.Contains(err.Error(), "not found"):
+		JSON404(ctx, err)
+	case err == errors.ErrFormatInvalid || strings.Contains(err.Error(), "invalid"):
+		JSON400(ctx, err)
+	default:
+		JSON500(ctx, err)
 	}
 }
 
@@ -34,13 +34,13 @@ func ThrowFormatInvalid(ctx *gin.Context, errors []response.ValidationFailsRespo
 	res := response.Response{
 		Status:  http.StatusBadRequest,
 		Message: "Bad Request",
-		Errors:    errors,
+		Errors:  errors,
 	}
-	ctx.JSON(res.Status, res)
+	ctx.AbortWithStatusJSON(res.Status, res)
 }
 
 func JSON500(ctx *gin.Context, err error) {
-	ctx.JSON(http.StatusInternalServerError, response.Response{
+	ctx.AbortWithStatusJSON(http.StatusInternalServerError, response.Response{
 		Status:  http.StatusInternalServerError,
 		Message: http.StatusText(http.StatusInternalServerError),
 		Errors:  err.Error(),
@@ -48,7 +48,7 @@ func JSON500(ctx *gin.Context, err error) {
 }
 
 func JSON404(ctx *gin.Context, err error) {
-	ctx.JSON(http.StatusNotFound, response.Response{
+	ctx.AbortWithStatusJSON(http.StatusNotFound, response.Response{
 		Status:  http.StatusNotFound,
 		Message: http.StatusText(http.StatusNotFound),
 		Errors:  err.Error(),
@@ -56,7 +56,7 @@ func JSON404(ctx *gin.Context, err error) {
 }
 
 func JSON400(ctx *gin.Context, err error) {
-	ctx.JSON(http.StatusBadRequest, response.Response{
+	ctx.AbortWithStatusJSON(http.StatusBadRequest, response.Response{
 		Status:  http.StatusBadRequest,
 		Message: http.StatusText(http.StatusBadRequest),
 		Errors:  err.Error(),
@@ -64,7 +64,7 @@ func JSON400(ctx *gin.Context, err error) {
 }
 
 func JSON401(ctx *gin.Context, message string) {
-	ctx.JSON(http.StatusUnauthorized, response.Response{
+	ctx.AbortWithStatusJSON(http.StatusUnauthorized, response.Response{
 		Status:  http.StatusUnauthorized,
 		Message: http.StatusText(http.StatusUnauthorized),
 		Errors:  message,
@@ -72,7 +72,7 @@ func JSON401(ctx *gin.Context, message string) {
 }
 
 func JSON403(ctx *gin.Context, message string) {
-	ctx.JSON(http.StatusForbidden, response.Response{
+	ctx.AbortWithStatusJSON(http.StatusForbidden, response.Response{
 		Status:  http.StatusForbidden,
 		Message: http.StatusText(http.StatusForbidden),
 		Errors:  message,

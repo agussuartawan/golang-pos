@@ -1,12 +1,12 @@
 package router
 
 import (
-	"github.com/agussuartawan/golang-pos/controllers/authController"
-	"github.com/agussuartawan/golang-pos/controllers/companyController"
-	"github.com/agussuartawan/golang-pos/controllers/permissionController"
-	"github.com/agussuartawan/golang-pos/controllers/roleController"
-	"github.com/agussuartawan/golang-pos/controllers/userController"
-	"github.com/agussuartawan/golang-pos/controllers/warehouseController"
+	"github.com/agussuartawan/golang-pos/controllers/authcontroller"
+	"github.com/agussuartawan/golang-pos/controllers/companycontroller"
+	"github.com/agussuartawan/golang-pos/controllers/permissioncontroller"
+	"github.com/agussuartawan/golang-pos/controllers/rolecontroller"
+	"github.com/agussuartawan/golang-pos/controllers/usercontroller"
+	"github.com/agussuartawan/golang-pos/controllers/warehousecontroller"
 	"github.com/agussuartawan/golang-pos/core/middleware"
 	"github.com/gin-gonic/gin"
 )
@@ -39,53 +39,53 @@ func LoadRouter() *gin.Engine {
 
 func companyRouterV1() {
 	router := apiRouterV1.Group("/company")
-	router.Use(middleware.Authorized("view_company")).GET("/", companyController.List)
-	router.Use(middleware.Authorized("view_company")).GET("/:id", companyController.FindById)
-	router.Use(middleware.Authorized("create_company")).POST("/", companyController.Create)
-	router.Use(middleware.Authorized("update_company")).PATCH("/:id", companyController.Update)
-	router.Use(middleware.Authorized("delete_company")).DELETE("/:id", companyController.Delete)
+	router.Use(middleware.Authorized("view_company")).GET("/", companycontroller.List)
+	router.Use(middleware.Authorized("view_company")).GET("/:id", companycontroller.FindById)
+	router.Use(middleware.Authorized("create_company")).POST("/", companycontroller.Create)
+	router.Use(middleware.Authorized("update_company")).PATCH("/:id", companycontroller.Update)
+	router.Use(middleware.Authorized("delete_company")).DELETE("/:id", companycontroller.Delete)
 }
 
 func warehouseRouterV1() {
 	router := apiRouterV1.Group("/warehouse")
-	router.Use(middleware.Authorized("view_warehouse")).GET("/", warehouseController.List)
-	router.Use(middleware.Authorized("view_warehouse")).GET("/:id", warehouseController.FindById)
-	router.Use(middleware.Authorized("create_warehouse")).POST("/", warehouseController.Create)
-	router.Use(middleware.Authorized("update_warehouse")).PATCH("/:id", warehouseController.Update)
-	router.Use(middleware.Authorized("delete_warehouse")).DELETE("/:id", warehouseController.Delete)
+	router.Use(middleware.Authorized("view_warehouse")).GET("/", warehousecontroller.List)
+	router.Use(middleware.Authorized("view_warehouse")).GET("/:id", warehousecontroller.FindById)
+	router.Use(middleware.Authorized("create_warehouse")).POST("/", warehousecontroller.Create)
+	router.Use(middleware.Authorized("update_warehouse")).PATCH("/:id", warehousecontroller.Update)
+	router.Use(middleware.Authorized("delete_warehouse")).DELETE("/:id", warehousecontroller.Delete)
 }
 
 func roleRouterV1() {
 	router := apiRouterV1.Group("/role")
-	router.Use(middleware.Authorized("view_role")).GET("/", roleController.List)
-	router.Use(middleware.Authorized("view_role")).GET("/:id", roleController.FindById)
-	router.Use(middleware.Authorized("create_role")).POST("/", roleController.Create)
-	router.Use(middleware.Authorized("update_role")).PATCH("/:id", roleController.Update)
-	router.Use(middleware.Authorized("delete_role")).DELETE("/:id", roleController.Delete)
-	router.Use(middleware.Authorized("update_role")).POST("/append-permissions", roleController.AppendPermissions)
+	router.Use(middleware.Authorized("view_role")).GET("/", rolecontroller.List)
+	router.Use(middleware.Authorized("view_role")).GET("/:id", rolecontroller.FindById)
+	router.Use(middleware.Authorized("create_role")).POST("/", rolecontroller.Create)
+	router.Use(middleware.Authorized("update_role")).PATCH("/:id", rolecontroller.Update)
+	router.Use(middleware.Authorized("delete_role")).DELETE("/:id", rolecontroller.Delete)
+	router.Use(middleware.Authorized("update_role")).POST("/append-permissions", rolecontroller.AppendPermissions)
 }
 
 func permissionRouterV1() {
 	router := apiRouterV1.Group("/permission")
-	router.Use(middleware.Authorized("view_permission")).GET("/", permissionController.List)
-	// router.GET("/:id", permissionController.FindById)
-	router.Use(middleware.Authorized("create_permission")).POST("/", permissionController.Create)
-	// router.PATCH("/:id", permissionController.Update)
-	// router.DELETE("/:id", permissionController.Delete)
+	router.Use(middleware.Authorized("view_permission")).GET("/", permissioncontroller.List)
+	// router.GET("/:id", permissioncontroller.FindById)
+	router.Use(middleware.Authorized("create_permission")).POST("/", permissioncontroller.Create)
+	// router.PATCH("/:id", permissioncontroller.Update)
+	// router.DELETE("/:id", permissioncontroller.Delete)
 }
 
 func userRouterV1() {
 	router := apiRouterV1.Group("/user")
-	router.Use(middleware.Authorized("view_user")).GET("/", userController.List)
-	// router.GET("/:id", userController.FindById)
-	router.Use(middleware.Authorized("create_user")).POST("/", userController.Create)
-	router.Use(middleware.Authorized("update_user")).POST("/append-roles", userController.AppendRoles)
-	// router.PATCH("/:id", userController.Update)
-	// router.DELETE("/:id", userController.Delete)
+	router.Use(middleware.Authorized("view_user")).GET("/", usercontroller.List)
+	// router.GET("/:id", usercontroller.FindById)
+	router.Use(middleware.Authorized("create_user")).POST("/", usercontroller.Create)
+	router.Use(middleware.Authorized("update_user")).POST("/append-roles", usercontroller.AppendRoles)
+	// router.PATCH("/:id", usercontroller.Update)
+	// router.DELETE("/:id", usercontroller.Delete)
 }
 
 func authRouterV1() {
 	router := apiRouterV1.Group("/auth")
-	router.POST("/login", authController.Login)
-	router.Use(middleware.Authenticated()).GET("/profile", authController.Profile)
+	router.POST("/login", authcontroller.Login)
+	router.Use(middleware.Authenticated()).GET("/profile", authcontroller.Profile)
 }
