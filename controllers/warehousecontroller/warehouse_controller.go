@@ -133,7 +133,7 @@ func Delete(ctx *gin.Context) {
 
 	log.Printf("Menghapus warehouse dengan id %v...", id)
 
-	if err := warehouseRepo.Delete(id); err != nil {
+	if err := warehouseRepo.Delete(uint(id)); err != nil {
 		helper.ThrowError(ctx, err)
 		return
 	}

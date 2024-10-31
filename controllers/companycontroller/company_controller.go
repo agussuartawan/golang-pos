@@ -44,24 +44,24 @@ func Create(ctx *gin.Context) {
 	log.Println("Membuat company baru...")
 
 	// bind json to struct
-	request := request.CompanyRequest{}
-	if err := ctx.ShouldBindJSON(&request); err != nil {
+	var req request.CompanyRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		helper.ThrowError(ctx, err)
 		return
 	}
 
 	// validate request
-	if err := helper.Validator(request); err != nil {
+	if err := helper.Validator(req); err != nil {
 		helper.ThrowFormatInvalid(ctx, err)
 		return
 	}
 
 	// map request to model
 	company := models.Company{
-		Name:    request.Name,
-		Email:   request.Email,
-		Phone:   request.Phone,
-		Address: request.Address,
+		Name:    req.Name,
+		Email:   req.Email,
+		Phone:   req.Phone,
+		Address: req.Address,
 	}
 
 	// store to database
@@ -71,7 +71,7 @@ func Create(ctx *gin.Context) {
 	}
 
 	// give response
-	ctx.JSON(http.StatusOK, response.OK(request))
+	ctx.JSON(http.StatusOK, response.OK(req))
 }
 
 func Update(ctx *gin.Context) {

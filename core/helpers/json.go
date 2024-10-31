@@ -2,28 +2,43 @@ package helper
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
 
-	"github.com/agussuartawan/golang-pos/core/errors"
+	customErrors "github.com/agussuartawan/golang-pos/core/errors"
 	"github.com/agussuartawan/golang-pos/data/response"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-func JSON(ctx *gin.Context, response response.Response) {
-	ctx.Header("Content-Type", "application/json")
-	ctx.JSON(http.StatusOK, response)
+func JSON200(ctx *gin.Context, res interface{}) {
+	ctx.JSON(http.StatusOK, response.OK(res))
+}
+
+func JSON201(ctx *gin.Context, res interface{}) {
+	ctx.JSON(http.StatusCreated, response.Created(res))
+}
+
+func JSONPaginate(ctx *gin.Context, page int, limit int, total int64, data interface{}) {
+	ctx.JSON(http.StatusOK, response.Response{
+		Status:    http.StatusOK,
+		Message:   "Success",
+		Page:      &page,
+		Limit:     &limit,
+		TotalData: &total,
+		Data:      data,
+	})
 }
 
 func ThrowError(ctx *gin.Context, err error) {
 	switch {
-	case err == errors.ErrUnauthorized || strings.Contains(err.Error(), "jwt"):
+	case errors.Is(err, customErrors.ErrUnauthorized) || strings.Contains(err.Error(), "jwt"):
 		JSON401(ctx, err.Error())
-	case err == gorm.ErrRecordNotFound || strings.Contains(err.Error(), "not found"):
+	case errors.Is(err, gorm.ErrRecordNotFound) || strings.Contains(err.Error(), "not found"):
 		JSON404(ctx, err)
-	case err == errors.ErrFormatInvalid || strings.Contains(err.Error(), "invalid"):
+	case errors.Is(err, customErrors.ErrFormatInvalid) || strings.Contains(err.Error(), "invalid"):
 		JSON400(ctx, err)
 	default:
 		JSON500(ctx, err)
@@ -85,4 +100,27 @@ func LogInfo(value interface{}) {
 		fmt.Println(err)
 	}
 	fmt.Println(string(jsonData))
+}
+
+func DecodeAndValidate(req interface{}, ctx *gin.Context) bool {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ThrowError(ctx, err)
+		return false
+	}
+
+	if err := Validator(req); err != nil {
+		ThrowFormatInvalid(ctx, err)
+		return false
+	}
+
+	return true
+}
+
+func GetQueryParam(param interface{}, ctx *gin.Context) bool {
+	if err := ctx.ShouldBindQuery(&param); err != nil {
+		ThrowError(ctx, err)
+		return false
+	}
+
+	return true
 }

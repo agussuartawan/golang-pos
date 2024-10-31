@@ -3,8 +3,10 @@ package router
 import (
 	"github.com/agussuartawan/golang-pos/controllers/authcontroller"
 	"github.com/agussuartawan/golang-pos/controllers/companycontroller"
+	"github.com/agussuartawan/golang-pos/controllers/outletcontroller"
 	"github.com/agussuartawan/golang-pos/controllers/permissioncontroller"
 	"github.com/agussuartawan/golang-pos/controllers/rolecontroller"
+	"github.com/agussuartawan/golang-pos/controllers/unitcontroller"
 	"github.com/agussuartawan/golang-pos/controllers/usercontroller"
 	"github.com/agussuartawan/golang-pos/controllers/warehousecontroller"
 	"github.com/agussuartawan/golang-pos/core/middleware"
@@ -33,6 +35,10 @@ func LoadRouter() *gin.Engine {
 	userRouterV1()
 	// route for auth
 	authRouterV1()
+	// route for unit
+	unitRouterV1()
+	// outlet
+	outletRouterV1()
 
 	return router
 }
@@ -88,4 +94,16 @@ func authRouterV1() {
 	router := apiRouterV1.Group("/auth")
 	router.POST("/login", authcontroller.Login)
 	router.Use(middleware.Authenticated()).GET("/profile", authcontroller.Profile)
+}
+
+func unitRouterV1() {
+	router := apiRouterV1.Group("/unit")
+	router.Use(middleware.Authorized("create_unit")).POST("/", unitcontroller.Create)
+	router.Use(middleware.Authorized("view_unit")).GET("/", unitcontroller.List)
+}
+
+func outletRouterV1() {
+	router := apiRouterV1.Group("/outlet")
+	router.Use(middleware.Authorized("view_outlet")).GET("/", outletcontroller.List)
+	router.Use(middleware.Authorized("create_outlet")).POST("/", outletcontroller.Create)
 }

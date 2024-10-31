@@ -116,3 +116,17 @@ func GetProfile(id uint, user *models.User) error {
 		First(&user, id).
 		Error
 }
+
+func IsExists(id uint) (bool, error) {
+	var exists bool
+	if err := config.DB.Model(&models.User{}).
+		Select("1").
+		Where("users.id = ?", id).
+		Limit(1).
+		Scan(&exists).
+		Error; err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}

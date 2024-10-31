@@ -15,7 +15,7 @@ func Create(model models.Warehouse) error {
 	return result.Error
 }
 
-func Delete(id int) error {
+func Delete(id uint) error {
 	if exists, err := IsExist(id); err != nil {
 		return err
 	} else if !exists {
@@ -36,7 +36,7 @@ func Update(id int, req request.WarehouseRequest) error {
 	return result.Error
 }
 
-func IsExist(id int) (bool, error) {
+func IsExist(id uint) (bool, error) {
 	var exists bool
 	if result := config.DB.Model(&models.Warehouse{}).
 		Select("1").
