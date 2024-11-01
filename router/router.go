@@ -5,6 +5,7 @@ import (
 	"github.com/agussuartawan/golang-pos/controllers/companycontroller"
 	"github.com/agussuartawan/golang-pos/controllers/outletcontroller"
 	"github.com/agussuartawan/golang-pos/controllers/permissioncontroller"
+	"github.com/agussuartawan/golang-pos/controllers/productcontroller"
 	"github.com/agussuartawan/golang-pos/controllers/rolecontroller"
 	"github.com/agussuartawan/golang-pos/controllers/unitcontroller"
 	"github.com/agussuartawan/golang-pos/controllers/usercontroller"
@@ -39,6 +40,8 @@ func LoadRouter() *gin.Engine {
 	unitRouterV1()
 	// outlet
 	outletRouterV1()
+	// product
+	productRouterV1()
 
 	return router
 }
@@ -106,4 +109,10 @@ func outletRouterV1() {
 	router := apiRouterV1.Group("/outlet")
 	router.Use(middleware.Authorized("view_outlet")).GET("/", outletcontroller.List)
 	router.Use(middleware.Authorized("create_outlet")).POST("/", outletcontroller.Create)
+}
+
+func productRouterV1() {
+	router := apiRouterV1.Group("/product")
+	router.Use(middleware.Authorized("view_product")).POST("/", productcontroller.Create)
+	router.Use(middleware.Authorized("create_product")).GET("/", productcontroller.List)
 }

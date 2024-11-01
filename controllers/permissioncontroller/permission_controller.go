@@ -15,27 +15,27 @@ import (
 func Create(ctx *gin.Context) {
 	log.Println("Membuat permission baru...")
 
-	request := request.PermissionRequest{}
-	if err := ctx.ShouldBindJSON(&request); err != nil {
+	req := request.PermissionRequest{}
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		helper.ThrowError(ctx, err)
 		return
 	}
 
-	if err := helper.Validator(request); err != nil {
+	if err := helper.Validator(req); err != nil {
 		helper.ThrowFormatInvalid(ctx, err)
 		return
 	}
 
 	permission := models.Permission{
-		Name:        request.Name,
-		Description: request.Description,
+		Name:        req.Name,
+		Description: req.Description,
 	}
 	if err := permissionrepository.Create(permission); err != nil {
 		helper.ThrowError(ctx, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response.OK(request))
+	ctx.JSON(http.StatusOK, response.OK(req))
 }
 
 func List(ctx *gin.Context) {
@@ -47,11 +47,11 @@ func List(ctx *gin.Context) {
 		return
 	}
 
-	permissions, err := permissionrepository.List(param)
+	permissions, err := permissionrepository.List(&param)
 	if err != nil {
 		helper.ThrowError(ctx, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response.OK(permissions))
+	helper.JSONPaginate(ctx, param.PaginationParam.SetData(permissions))
 }

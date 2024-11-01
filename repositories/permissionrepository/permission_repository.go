@@ -12,7 +12,7 @@ func Create(model models.Permission) error {
 	return err
 }
 
-func List(param request.PermissionParam) ([]response.PermissionResponse, error) {
+func List(param *request.PermissionParam) ([]response.PermissionResponse, error) {
 	var permissions []response.PermissionResponse
 	query := config.DB.Table("permissions").Where("deleted_at IS NULL")
 
@@ -20,7 +20,7 @@ func List(param request.PermissionParam) ([]response.PermissionResponse, error) 
 		query = query.Where("name like ?", "%"+*param.Name+"%")
 	}
 
-	err := query.Find(&permissions).Error
+	err := param.Paginate(query).Find(&permissions).Error
 	return permissions, err
 }
 

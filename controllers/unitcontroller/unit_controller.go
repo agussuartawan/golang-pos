@@ -39,11 +39,17 @@ func Create(ctx *gin.Context) {
 func List(ctx *gin.Context) {
 	log.Println("Mengambil list unit...")
 
-	var units []response.UnitResponse
-	if err := unitrepository.List(&units); err != nil {
+	var param request.UnitParam
+	if err := ctx.ShouldBindQuery(&param); err != nil {
 		helper.ThrowError(ctx, err)
 		return
 	}
 
-	helper.JSON200(ctx, units)
+	var units []response.UnitResponse
+	if err := unitrepository.List(&units, &param); err != nil {
+		helper.ThrowError(ctx, err)
+		return
+	}
+
+	helper.JSONPaginate(ctx, param.PaginationParam.SetData(units))
 }
