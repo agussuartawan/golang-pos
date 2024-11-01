@@ -1,10 +1,17 @@
 package request
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type PaginationParam struct {
-	Page  *int `form:"page"`
-	Limit *int `form:"limit"`
+	Page      *int        `form:"page"`
+	Limit     *int        `form:"limit"`
+	TotalData *int64      `form:"-"`
+	TotalPage *int        `form:"-"`
+	NextPage  *int        `form:"-"`
+	PrevPage  *int        `form:"-"`
+	Data      interface{} `form:"-"`
 }
 
 func (p *PaginationParam) Paginate(db *gorm.DB) *gorm.DB {
@@ -19,6 +26,36 @@ func (p *PaginationParam) Paginate(db *gorm.DB) *gorm.DB {
 	}
 	if p.Page != nil {
 		offset = (*p.Page - 1) * limit
+	}
+
+	// count total data
+	var total int64
+	db.Count(&total)
+	p.TotalData = &total
+
+	// Hitung total halaman
+	totalPage := int(total) / limit
+	if int(total)%limit != 0 {
+		totalPage++ // Tambahkan 1 jika ada sisa
+	}
+	p.TotalPage = &totalPage
+
+	// Hitung halaman berikutnya dan sebelumnya
+	if p.Page != nil {
+		currentPage := *p.Page
+		if currentPage < totalPage {
+			nextPage := currentPage + 1
+			p.NextPage = &nextPage
+		}
+		if currentPage > 1 {
+			prevPage := currentPage - 1
+			p.PrevPage = &prevPage
+		}
+	} else {
+		// Default ke halaman pertama jika Page tidak diset
+		firstPage := 1
+		p.Page = &firstPage
+		p.NextPage = &firstPage
 	}
 
 	return db.Limit(limit).Offset(offset)
@@ -38,4 +75,9 @@ func (p *PaginationParam) GetLimit() int {
 	}
 
 	return *p.Limit
+}
+
+func (p *PaginationParam) SetData(data interface{}) PaginationParam {
+	p.Data = data
+	return *p
 }

@@ -11,7 +11,7 @@ func Create(model *models.Outlet) error {
 	return config.DB.Create(&model).Error
 }
 
-func List(res *[]response.OutletResponse, param request.OutletParam) (int64, error) {
+func List(res *[]response.OutletResponse, param *request.OutletParam) error {
 	query := config.DB.Model(&models.Outlet{}).Joins("Warehouse").Joins("Supervisor")
 
 	if param.Name != nil {
@@ -24,9 +24,5 @@ func List(res *[]response.OutletResponse, param request.OutletParam) (int64, err
 		query = query.Where("supervisor_id = ?", param.SupervisorID)
 	}
 
-	// count total data
-	var total int64
-	query.Count(&total)
-
-	return total, param.Paginate(query).Order("created_at desc").Find(&res).Error
+	return param.Paginate(query).Order("created_at desc").Find(&res).Error
 }

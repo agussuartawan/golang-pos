@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/agussuartawan/golang-pos/data/request"
 	"net/http"
 	"strings"
 
@@ -21,14 +22,17 @@ func JSON201(ctx *gin.Context, res interface{}) {
 	ctx.JSON(http.StatusCreated, response.Created(res))
 }
 
-func JSONPaginate(ctx *gin.Context, page int, limit int, total int64, data interface{}) {
+func JSONPaginate(ctx *gin.Context, param request.PaginationParam) {
 	ctx.JSON(http.StatusOK, response.Response{
 		Status:    http.StatusOK,
 		Message:   "Success",
-		Page:      &page,
-		Limit:     &limit,
-		TotalData: &total,
-		Data:      data,
+		Page:      param.Page,
+		Limit:     param.Limit,
+		TotalData: param.TotalData,
+		TotalPage: param.TotalPage,
+		NextPage:  param.NextPage,
+		PrevPage:  param.PrevPage,
+		Data:      param.Data,
 	})
 }
 

@@ -37,11 +37,11 @@ func List(ctx *gin.Context) {
 	}
 
 	var data []response.OutletResponse
-	total, err := outletrepository.List(&data, param)
+	err := outletrepository.List(&data, &param)
 	if err != nil {
 		helper.ThrowError(ctx, err)
 		return
 	}
 
-	helper.JSONPaginate(ctx, param.GetPage(), param.GetLimit(), total, data)
+	helper.JSONPaginate(ctx, param.PaginationParam.SetData(data))
 }
