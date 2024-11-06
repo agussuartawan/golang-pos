@@ -1,11 +1,21 @@
 package payload
 
 import (
+	"encoding/json"
 	"github.com/agussuartawan/golang-pos/data/response"
 )
 
-type SessionPayload struct {
-	Id string `json:"session"`
-	UserId uint `json:"-"`
-	User response.User `json:"user"`
+type SessionCookie struct {
+	SessionId string        `json:"sessionId"`
+	Token     string        `json:"token"`
+	User      response.User `json:"user"`
+}
+
+func (s *SessionCookie) ToJSON() (string, error) {
+	jsonSession, err := json.Marshal(s)
+	if err != nil {
+		return "", err
+	}
+
+	return string(jsonSession), nil
 }

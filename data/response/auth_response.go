@@ -1,12 +1,13 @@
 package response
 
-import "time"
+import (
+	"time"
+)
 
 type LoginResponse struct {
 	Name        string   `json:"name"`
 	Roles       []string `json:"roles,omitempty"`
 	Permissions []string `json:"permissions,omitempty"`
-	Token       string   `json:"token"`
 }
 
 type ProfileResponse struct {

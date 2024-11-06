@@ -97,6 +97,7 @@ func authRouterV1() {
 	router := apiRouterV1.Group("/auth")
 	router.POST("/login", authcontroller.Login)
 	router.Use(middleware.Authenticated()).GET("/profile", authcontroller.Profile)
+	router.Use(middleware.Authenticated()).DELETE("/logout", authcontroller.Logout)
 }
 
 func unitRouterV1() {

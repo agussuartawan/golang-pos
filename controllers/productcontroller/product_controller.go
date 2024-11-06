@@ -37,5 +37,5 @@ func List(c *gin.Context) {
 		return
 	}
 
-	helper.JSONPaginate(c, param.PaginationParam.SetData(data))
+	helper.JSONPaginate(c, param.PaginationParam, data)
 }

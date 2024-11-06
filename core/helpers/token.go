@@ -9,11 +9,12 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func CreateToken(sessionId string, expiresAt time.Time) (string, error) {
+func CreateToken(sessionId string, isSuperAdmin bool, expiresAt time.Time) (string, error) {
 	SecretKey := os.Getenv("SECRET_KEY")
 
-	claims := &payload.ClaimPayload {
-		SessionId: sessionId,
+	claims := &payload.ClaimPayload{
+		SessionId:    sessionId,
+		IsSuperAdmin: isSuperAdmin,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expiresAt.Unix(),
 			IssuedAt:  time.Now().Unix(),
@@ -46,8 +47,8 @@ func DecodeToken(token string) (*payload.ClaimPayload, error) {
 		return nil, errors.New("jwt token is invalid")
 	}
 	if claims.ExpiresAt < time.Now().Unix() {
-        return nil, errors.New("jwt token is expired")
-    }
+		return nil, errors.New("jwt token is expired")
+	}
 
 	return &claims, nil
 }

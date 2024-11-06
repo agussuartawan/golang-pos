@@ -51,5 +51,5 @@ func List(ctx *gin.Context) {
 		return
 	}
 
-	helper.JSONPaginate(ctx, param.PaginationParam.SetData(units))
+	helper.JSONPaginate(ctx, param.PaginationParam, units)
 }

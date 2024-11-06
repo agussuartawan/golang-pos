@@ -22,17 +22,12 @@ func JSON201(ctx *gin.Context, res interface{}) {
 	ctx.JSON(http.StatusCreated, response.Created(res))
 }
 
-func JSONPaginate(ctx *gin.Context, param request.PaginationParam) {
+func JSONPaginate(ctx *gin.Context, param request.PaginationParam, data interface{}) {
 	ctx.JSON(http.StatusOK, response.Response{
-		Status:    http.StatusOK,
-		Message:   "Success",
-		Page:      param.Page,
-		Limit:     param.Limit,
-		TotalData: param.TotalData,
-		TotalPage: param.TotalPage,
-		NextPage:  param.NextPage,
-		PrevPage:  param.PrevPage,
-		Data:      param.Data,
+		Status:     http.StatusOK,
+		Message:    "Success",
+		Pagination: param.ToResponse(),
+		Data:       data,
 	})
 }
 

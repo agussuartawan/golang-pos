@@ -1,12 +1,12 @@
 package authcontroller
 
 import (
-	"errors"
 	helper "github.com/agussuartawan/golang-pos/core/helpers"
 	"github.com/agussuartawan/golang-pos/data/payload"
 	"github.com/agussuartawan/golang-pos/data/request"
 	"github.com/agussuartawan/golang-pos/data/response"
 	"github.com/agussuartawan/golang-pos/models"
+	"github.com/agussuartawan/golang-pos/repositories/sessionrepository"
 	"github.com/agussuartawan/golang-pos/repositories/userrepository"
 	"github.com/agussuartawan/golang-pos/services/authservice"
 	"github.com/gin-gonic/gin"
@@ -28,23 +28,47 @@ func Login(ctx *gin.Context) {
 	}
 
 	var res response.LoginResponse
-	if err := authservice.Login(req, &res); err != nil {
+	var session payload.SessionCookie
+	if err := authservice.Login(req, &res, &session); err != nil {
 		helper.ThrowError(ctx, err)
 		return
 	}
 
+	// success login
 	log.Printf("%v telah login", res.Name)
+	maxAge := 30 * 24 * 60 * 60
+	sessionJSON, err := session.ToJSON()
+	if err != nil {
+		helper.ThrowError(ctx, err)
+		return
+	}
+	ctx.SetCookie("session", sessionJSON, maxAge, "/", "localhost", false, true)
 	ctx.JSON(http.StatusOK, response.OK(res))
 }
 
-func Profile(ctx *gin.Context) {
-	session, exists := ctx.Get("session")
-	if !exists {
-		helper.ThrowError(ctx, errors.New("session not found"))
+func Logout(ctx *gin.Context) {
+	var session payload.SessionCookie
+	if err := helper.GetPrincipal(ctx, &session); err != nil {
+		helper.ThrowError(ctx, err)
 		return
 	}
 
-	sessionStruct := session.(payload.SessionPayload)
+	if err := sessionrepository.DeleteSession(session.SessionId); err != nil {
+		helper.ThrowError(ctx, err)
+		return
+	}
+
+	ctx.SetCookie("session", "", -1, "/", "localhost", false, true)
+	helper.JSON200(ctx, "Logout success")
+}
+
+func Profile(ctx *gin.Context) {
+	var sessionStruct payload.SessionCookie
+	if err := helper.GetPrincipal(ctx, &sessionStruct); err != nil {
+		helper.ThrowError(ctx, err)
+		return
+	}
+
 	user := models.User{}
 	if err := userrepository.GetProfile(sessionStruct.User.Id, &user); err != nil {
 		helper.ThrowError(ctx, err)

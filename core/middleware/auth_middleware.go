@@ -1,33 +1,26 @@
 package middleware
 
 import (
-	"strings"
-
+	"encoding/json"
 	helper "github.com/agussuartawan/golang-pos/core/helpers"
 	"github.com/agussuartawan/golang-pos/data/payload"
-	"github.com/agussuartawan/golang-pos/repositories/sessionrepository"
 	"github.com/agussuartawan/golang-pos/repositories/userrepository"
 	"github.com/gin-gonic/gin"
 )
 
 func Authenticated() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.GetHeader("Authorization")
-		if token == "" || !strings.HasPrefix(token, "Bearer ") {
-			helper.JSON401(c, "bearer token required")
-			return
-		}
-
-		token = strings.TrimPrefix(token, "Bearer ")
-		claims, err := validateToken(token)
+		// get session from cookie
+		sessionJSON, err := c.Cookie("session")
 		if err != nil {
-			helper.ThrowError(c, err)
+			helper.JSON401(c, "session not found")
 			return
 		}
 
-		var session payload.SessionPayload
-		if err := sessionrepository.Get(&session, claims.SessionId); err != nil {
-			helper.ThrowError(c, err)
+		// validate cookie and get session
+		var session payload.SessionCookie
+		if _, err := validateCookie(&session, sessionJSON); err != nil {
+			helper.JSON401(c, err.Error())
 			return
 		}
 
@@ -38,39 +31,29 @@ func Authenticated() gin.HandlerFunc {
 
 func Authorized(permission string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.GetHeader("Authorization")
-		if token == "" || !strings.HasPrefix(token, "Bearer ") {
-			helper.JSON401(c, "bearer token required")
-			return
-		}
-
-		token = strings.TrimPrefix(token, "Bearer ")
-		claims, err := validateToken(token)
+		// get session from cookie
+		sessionJSON, err := c.Cookie("session")
 		if err != nil {
-			helper.ThrowError(c, err)
+			helper.JSON401(c, "session not found")
 			return
 		}
 
-		var session payload.SessionPayload
-		if err := sessionrepository.Get(&session, claims.SessionId); err != nil {
-			helper.ThrowError(c, err)
-			return
-		}
-
-		// permit if role contains super_admin
-		superAdmin, err := userrepository.IsHasRole(session.UserId, "super_admin")
+		// validate cookie and get session
+		var session payload.SessionCookie
+		claims, err := validateCookie(&session, sessionJSON)
 		if err != nil {
-			helper.ThrowError(c, err)
+			helper.JSON401(c, err.Error())
 			return
 		}
-		if superAdmin {
+
+		if claims.IsSuperAdmin {
 			c.Set("session", session)
 			c.Next()
 			return
 		}
 
 		// check permission
-		permitted, err := userrepository.IsHasPermission(session.UserId, permission)
+		permitted, err := userrepository.IsHasPermission(session.User.Id, permission)
 		if err != nil {
 			helper.ThrowError(c, err)
 			return
@@ -87,6 +70,20 @@ func Authorized(permission string) gin.HandlerFunc {
 
 func validateToken(token string) (*payload.ClaimPayload, error) {
 	claims, err := helper.DecodeToken(token)
+	if err != nil {
+		return nil, err
+	}
+
+	return claims, nil
+}
+
+func validateCookie(session *payload.SessionCookie, sessionJSON string) (*payload.ClaimPayload, error) {
+	// deserialize sessionJSON
+	if err := json.Unmarshal([]byte(sessionJSON), &session); err != nil {
+		return nil, err
+	}
+
+	claims, err := validateToken(session.Token)
 	if err != nil {
 		return nil, err
 	}
