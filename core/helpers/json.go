@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/agussuartawan/golang-pos/data/request"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -32,6 +33,7 @@ func JSONPaginate(ctx *gin.Context, param request.PaginationParam, data interfac
 }
 
 func ThrowError(ctx *gin.Context, err error) {
+	slog.Error(err.Error())
 	switch {
 	case errors.Is(err, customErrors.ErrUnauthorized) || strings.Contains(err.Error(), "jwt"):
 		JSON401(ctx, err.Error())
@@ -48,7 +50,7 @@ func ThrowFormatInvalid(ctx *gin.Context, errors []response.ValidationFailsRespo
 	res := response.Response{
 		Status:  http.StatusBadRequest,
 		Message: "Bad Request",
-		Errors:  errors,
+		Error:   &response.Error{Message: "Form validation fails", Validation: errors},
 	}
 	ctx.AbortWithStatusJSON(res.Status, res)
 }
@@ -57,7 +59,7 @@ func JSON500(ctx *gin.Context, err error) {
 	ctx.AbortWithStatusJSON(http.StatusInternalServerError, response.Response{
 		Status:  http.StatusInternalServerError,
 		Message: http.StatusText(http.StatusInternalServerError),
-		Errors:  err.Error(),
+		Error:   &response.Error{Message: err.Error()},
 	})
 }
 
@@ -65,7 +67,7 @@ func JSON404(ctx *gin.Context, err error) {
 	ctx.AbortWithStatusJSON(http.StatusNotFound, response.Response{
 		Status:  http.StatusNotFound,
 		Message: http.StatusText(http.StatusNotFound),
-		Errors:  err.Error(),
+		Error:   &response.Error{Message: err.Error()},
 	})
 }
 
@@ -73,7 +75,7 @@ func JSON400(ctx *gin.Context, err error) {
 	ctx.AbortWithStatusJSON(http.StatusBadRequest, response.Response{
 		Status:  http.StatusBadRequest,
 		Message: http.StatusText(http.StatusBadRequest),
-		Errors:  err.Error(),
+		Error:   &response.Error{Message: err.Error()},
 	})
 }
 
@@ -81,7 +83,7 @@ func JSON401(ctx *gin.Context, message string) {
 	ctx.AbortWithStatusJSON(http.StatusUnauthorized, response.Response{
 		Status:  http.StatusUnauthorized,
 		Message: http.StatusText(http.StatusUnauthorized),
-		Errors:  message,
+		Error:   &response.Error{Message: "Authentication required"},
 	})
 }
 
@@ -89,7 +91,7 @@ func JSON403(ctx *gin.Context, message string) {
 	ctx.AbortWithStatusJSON(http.StatusForbidden, response.Response{
 		Status:  http.StatusForbidden,
 		Message: http.StatusText(http.StatusForbidden),
-		Errors:  message,
+		Error:   &response.Error{Message: "You do not have access to this resource"},
 	})
 }
 

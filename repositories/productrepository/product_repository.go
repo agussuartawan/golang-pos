@@ -41,7 +41,21 @@ func List(data *[]response.ProductResponse, param *request.ProductParam) error {
 		query = query.Where("products.name ILIKE ?", "%"+*param.Name+"%")
 	}
 
-	if err := param.Paginate(query).Find(&tempData).Error; err != nil {
+	if param.Query != nil {
+		query = query.Where("name ilike '%?%' and size = ?", *param.Query, *param.Query)
+	}
+
+	query = param.Paginate(query)
+	switch param.SortBy {
+	case "name":
+		query = query.Order("products.name " + param.SortBy)
+	case "size":
+		query = query.Order("products.size " + param.SortBy)
+	default:
+		query = query.Order("products.created_at desc")
+	}
+
+	if err := query.Find(&tempData).Error; err != nil {
 		return err
 	}
 

@@ -17,7 +17,11 @@ func List(param *request.PermissionParam) ([]response.PermissionResponse, error)
 	query := config.DB.Table("permissions").Where("deleted_at IS NULL")
 
 	if param.Name != nil {
-		query = query.Where("name like ?", "%"+*param.Name+"%")
+		query = query.Where("name ilike ?", "%"+*param.Name+"%")
+	}
+
+	if param.Query != nil {
+		query = query.Where("name ilike '%?%' and description ilike '%?%'", *param.Query, *param.Query)
 	}
 
 	query = param.Paginate(query)

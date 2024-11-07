@@ -7,7 +7,12 @@ type Response struct {
 	Message    string              `json:"message"`
 	Pagination *PaginationResponse `json:"pagination,omitempty"`
 	Data       interface{}         `json:"data,omitempty"`
-	Errors     interface{}         `json:"errors,omitempty"`
+	Error      *Error              `json:"error,omitempty"`
+}
+
+type Error struct {
+	Message    string                    `json:"message"`
+	Validation []ValidationFailsResponse `json:"validation,omitempty"`
 }
 
 type IDResponse struct {

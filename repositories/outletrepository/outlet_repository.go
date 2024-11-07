@@ -24,5 +24,20 @@ func List(res *[]response.OutletResponse, param *request.OutletParam) error {
 		query = query.Where("supervisor_id = ?", param.SupervisorID)
 	}
 
-	return param.Paginate(query).Order("created_at desc").Find(&res).Error
+	if param.Query != nil {
+		query = query.Where("name ilike '%?%' and address ilike '%?%'", *param.Query, *param.Query)
+	}
+
+	query = param.Paginate(query)
+	switch param.SortBy {
+	case "name":
+		query = query.Order("name " + param.Sort)
+	case "createdAt":
+		query = query.Order("created_at " + param.Sort)
+	default:
+		query = query.Order("created_at desc")
+	}
+
+	err := query.Find(&res).Error
+	return err
 }

@@ -11,7 +11,9 @@ import (
 	"github.com/agussuartawan/golang-pos/services/authservice"
 	"github.com/gin-gonic/gin"
 	"log"
+	"log/slog"
 	"net/http"
+	"slices"
 )
 
 func Login(ctx *gin.Context) {
@@ -39,6 +41,7 @@ func Login(ctx *gin.Context) {
 	maxAge := 30 * 24 * 60 * 60
 	sessionJSON, err := session.ToJSON()
 	if err != nil {
+		slog.Error("when parsing session to JSON")
 		helper.ThrowError(ctx, err)
 		return
 	}
@@ -83,26 +86,16 @@ func Profile(ctx *gin.Context) {
 		Phone:     user.Phone,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
-		Roles: func(roles []models.Role) []response.RolePermission {
-			var res []response.RolePermission
-			for _, role := range roles {
-				res = append(res, response.RolePermission{
-					Id:   role.ID,
-					Name: role.Name,
-					Permissions: func(permissions []models.Permission) []response.Permission {
-						var res []response.Permission
-						for _, permission := range permissions {
-							res = append(res, response.Permission{
-								Id:   permission.ID,
-								Name: permission.Name,
-							})
-						}
-						return res
-					}(role.Permissions),
-				})
+	}
+
+	for _, role := range user.Roles {
+		profileResponse.Roles = append(profileResponse.Roles, response.Role{Id: role.ID, Name: role.Name})
+		for _, permission := range role.Permissions {
+			p := response.Permission{Id: permission.ID, Name: permission.Name}
+			if !slices.Contains(profileResponse.Permissions, p) {
+				profileResponse.Permissions = append(profileResponse.Permissions, p)
 			}
-			return res
-		}(user.Roles),
+		}
 	}
 
 	ctx.JSON(http.StatusOK, response.OK(profileResponse))

@@ -2,7 +2,6 @@ package helper
 
 import (
 	"errors"
-
 	"github.com/agussuartawan/golang-pos/data/response"
 	"github.com/go-playground/validator/v10"
 )

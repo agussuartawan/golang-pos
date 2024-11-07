@@ -16,6 +16,7 @@ type User struct {
 	Email    string    `gorm:"not null; type:varchar(255)"`
 	Phone    *string   `gorm:"type:varchar(50)"`
 	Password string    `gorm:"not null; type:varchar(255)"`
+	Avatar   *string   `gorm:"type:varchar(255)"`
 	Roles    []Role    `gorm:"many2many:user_roles;"`
 	Employee *Employee `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT;"`
 }
