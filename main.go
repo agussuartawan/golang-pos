@@ -11,10 +11,9 @@ func init() {
 }
 
 func main() {
-	r := router.LoadRouter()
+	r := router.SetupRouter()
 
-	err := r.Run(":8080")
-	if err != nil {
+	if err := r.Run(":8080"); err != nil {
 		helper.LogError(err)
 	}
 }

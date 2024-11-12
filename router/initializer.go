@@ -2,27 +2,15 @@ package router
 
 import (
 	"github.com/agussuartawan/golang-pos/data/response"
+	"github.com/agussuartawan/golang-pos/router/middleware"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
-func Init() *gin.Engine {
+func SetupRouter() *gin.Engine {
 	// load router
 	router := gin.Default()
-	router.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Length, Content-Type, Authorization")
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-
-		c.Next()
-	})
-
-	router.Use(func(c *gin.Context) {
-		log.Println("CORS middleware executed")
-		c.Next()
-	})
+	router.Use(middleware.CorsMiddleware())
 
 	router.GET("/", func(c *gin.Context) {
 		res := response.Response{
@@ -41,6 +29,8 @@ func Init() *gin.Engine {
 		}
 		c.JSON(http.StatusNotFound, res)
 	})
+
+	LoadRouter(router)
 
 	return router
 }
