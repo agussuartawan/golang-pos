@@ -1,6 +1,11 @@
 package authcontroller
 
 import (
+	"log"
+	"log/slog"
+	"net/http"
+	"slices"
+
 	helper "github.com/agussuartawan/golang-pos/core/helpers"
 	"github.com/agussuartawan/golang-pos/data/payload"
 	"github.com/agussuartawan/golang-pos/data/request"
@@ -10,10 +15,6 @@ import (
 	"github.com/agussuartawan/golang-pos/repositories/userrepository"
 	"github.com/agussuartawan/golang-pos/services/authservice"
 	"github.com/gin-gonic/gin"
-	"log"
-	"log/slog"
-	"net/http"
-	"slices"
 )
 
 func Login(ctx *gin.Context) {
@@ -45,7 +46,9 @@ func Login(ctx *gin.Context) {
 		helper.ThrowError(ctx, err)
 		return
 	}
-	ctx.SetCookie("session", sessionJSON, maxAge, "/", "localhost", false, true)
+	domain := ctx.Request.Host
+	secure := ctx.Request.TLS != nil
+	ctx.SetCookie("session", sessionJSON, maxAge, "/", domain, secure, true)
 	ctx.JSON(http.StatusOK, response.OK(res))
 }
 
